@@ -1,5 +1,9 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
+#include <WiFi.h>
+
+const char* ssid         = "stalin";
+const char* password     = "palmeiras";
 
 #define TRIG_ENT  4
 #define ECHO_ENT  2
@@ -16,6 +20,11 @@ bool estadoAnteriorSai = false;
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
+void setup_wifi() {
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) { delay(500); }
+}
+
 void atualizarLCD() {
   if (vagasAtuais == vagasExibidos) return;
   vagasExibidos = vagasAtuais;
@@ -26,6 +35,7 @@ void setup() {
   pinMode(TRIG_ENT, OUTPUT); pinMode(ECHO_ENT, INPUT);
   pinMode(TRIG_SAI, OUTPUT); pinMode(ECHO_SAI, INPUT);
   Wire.begin(21, 22); lcd.init(); lcd.backlight();
+  setup_wifi();
   atualizarLCD();
 }
 
