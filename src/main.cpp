@@ -1,4 +1,5 @@
-#include <Arduino.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
 
 #define TRIG_ENT  4
 #define ECHO_ENT  2
@@ -9,10 +10,15 @@
 int vagasAtuais = TOTAL_VAGAS;
 bool estadoAnteriorEnt = false;
 
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
 void setup() {
   Serial.begin(115200);
   pinMode(TRIG_ENT, OUTPUT); pinMode(ECHO_ENT, INPUT);
   pinMode(TRIG_SAI, OUTPUT); pinMode(ECHO_SAI, INPUT);
+  Wire.begin(21, 22);
+  lcd.init();
+  lcd.backlight();
 }
 
 float lerDistancia(int pinoTrig, int pinoEcho) {
@@ -29,11 +35,12 @@ void loop() {
   bool ent = (distEnt >= 1.5f && distEnt <= 9.5f);
 
   if (ent && !estadoAnteriorEnt) {
-      if (vagasAtuais > 0) {
-          vagasAtuais--;
-          Serial.printf("Carro entrou! Vagas: %d\n", vagasAtuais);
-      }
+      if (vagasAtuais > 0) vagasAtuais--;
   }
   estadoAnteriorEnt = ent;
+
+  lcd.setCursor(0, 0);
+  lcd.print("Vagas: "); 
+  lcd.print(vagasAtuais);
   delay(50);
 }
