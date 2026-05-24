@@ -19,11 +19,13 @@ const char* topico_vagas = "joao/estacionamento/vagas";
 
 #define TOTAL_VAGAS 6
 #define PAUSA_CROSSTALK_US 5000UL
+#define MQTT_RETRY_MS      10000UL
 
 int vagasAtuais = TOTAL_VAGAS;
 int vagasExibidos = -1;
 bool estadoAnteriorEnt = false;
 bool estadoAnteriorSai = false;
+unsigned long tempoUltimoMQTT = 0UL;
 
 WiFiClientSecure espClient;
 PubSubClient client(espClient);
@@ -35,14 +37,15 @@ void setup_wifi() {
   espClient.setInsecure();
 }
 
-void reconnect() {
-  while (!client.connected()) {
-    if (client.connect("ESP32_Equipe13", mqtt_user, mqtt_pass)) {
-      char buf[8]; snprintf(buf, sizeof(buf), "%d", vagasAtuais);
-      client.publish(topico_vagas, buf);
-    } else {
-      delay(5000); 
-    }
+void tentarConectarMQTT() {
+  if (client.connected()) return;
+  unsigned long agora = millis();
+  if ((agora - tempoUltimoMQTT) < MQTT_RETRY_MS) return;
+  tempoUltimoMQTT = agora;
+  
+  if (client.connect("ESP32_Equipe13", mqtt_user, mqtt_pass)) {
+    char buf[8]; snprintf(buf, sizeof(buf), "%d", vagasAtuais);
+    client.publish(topico_vagas, buf);
   }
 }
 
@@ -75,8 +78,8 @@ void setup() {
 }
 
 void loop() {
-  if (!client.connected()) reconnect();
-  client.loop();
+  tentarConectarMQTT();
+  if (client.connected()) client.loop();
 
   float distEnt = lerDistancia(TRIG_ENT, ECHO_ENT);
   delayMicroseconds(PAUSA_CROSSTALK_US);
