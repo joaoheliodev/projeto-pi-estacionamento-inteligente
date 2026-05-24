@@ -8,17 +8,24 @@
 
 #define TOTAL_VAGAS 6
 int vagasAtuais = TOTAL_VAGAS;
+int vagasExibidos = -1;
 bool estadoAnteriorEnt = false;
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
+void atualizarLCD() {
+  if (vagasAtuais == vagasExibidos) return;
+  vagasExibidos = vagasAtuais;
+  lcd.setCursor(0, 0);
+  lcd.printf("Vagas: %-9d", vagasAtuais);
+}
+
 void setup() {
-  Serial.begin(115200);
   pinMode(TRIG_ENT, OUTPUT); pinMode(ECHO_ENT, INPUT);
   pinMode(TRIG_SAI, OUTPUT); pinMode(ECHO_SAI, INPUT);
   Wire.begin(21, 22);
-  lcd.init();
-  lcd.backlight();
+  lcd.init(); lcd.backlight();
+  atualizarLCD();
 }
 
 float lerDistancia(int pinoTrig, int pinoEcho) {
@@ -35,12 +42,8 @@ void loop() {
   bool ent = (distEnt >= 1.5f && distEnt <= 9.5f);
 
   if (ent && !estadoAnteriorEnt) {
-      if (vagasAtuais > 0) vagasAtuais--;
+      if (vagasAtuais > 0) { vagasAtuais--; atualizarLCD(); }
   }
   estadoAnteriorEnt = ent;
-
-  lcd.setCursor(0, 0);
-  lcd.print("Vagas: "); 
-  lcd.print(vagasAtuais);
   delay(50);
 }
