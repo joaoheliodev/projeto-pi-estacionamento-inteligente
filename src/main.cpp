@@ -1,9 +1,14 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #include <WiFi.h>
+#include <PubSubClient.h>
 
 const char* ssid         = "stalin";
 const char* password     = "palmeiras";
+const char* mqtt_server  = "3c36328d74d64bee879a2ce48ec2eff5.s1.eu.hivemq.cloud";
+const int   mqtt_port    = 8883;
+const char* mqtt_user    = "joao396";
+const char* mqtt_pass    = "Turiba14";
 
 #define TRIG_ENT  4
 #define ECHO_ENT  2
@@ -18,6 +23,8 @@ int vagasExibidos = -1;
 bool estadoAnteriorEnt = false;
 bool estadoAnteriorSai = false;
 
+WiFiClient espClient;
+PubSubClient client(espClient);
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 void setup_wifi() {
@@ -31,14 +38,6 @@ void atualizarLCD() {
   lcd.setCursor(0, 0); lcd.printf("Vagas: %-9d", vagasAtuais);
 }
 
-void setup() {
-  pinMode(TRIG_ENT, OUTPUT); pinMode(ECHO_ENT, INPUT);
-  pinMode(TRIG_SAI, OUTPUT); pinMode(ECHO_SAI, INPUT);
-  Wire.begin(21, 22); lcd.init(); lcd.backlight();
-  setup_wifi();
-  atualizarLCD();
-}
-
 float lerDistancia(int pinoTrig, int pinoEcho) {
   digitalWrite(pinoTrig, LOW); delayMicroseconds(2);
   digitalWrite(pinoTrig, HIGH); delayMicroseconds(10);
@@ -46,6 +45,15 @@ float lerDistancia(int pinoTrig, int pinoEcho) {
   long duracao = pulseIn(pinoEcho, HIGH, 17400UL);
   if (duracao == 0) return -1.0f;
   return (duracao * 0.0343f) / 2.0f;
+}
+
+void setup() {
+  pinMode(TRIG_ENT, OUTPUT); pinMode(ECHO_ENT, INPUT);
+  pinMode(TRIG_SAI, OUTPUT); pinMode(ECHO_SAI, INPUT);
+  Wire.begin(21, 22); lcd.init(); lcd.backlight();
+  setup_wifi();
+  client.setServer(mqtt_server, mqtt_port);
+  atualizarLCD();
 }
 
 void loop() {
