@@ -1,6 +1,7 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #include <WiFi.h>
+#include <WiFiClientSecure.h>
 #include <PubSubClient.h>
 
 const char* ssid         = "stalin";
@@ -9,6 +10,7 @@ const char* mqtt_server  = "3c36328d74d64bee879a2ce48ec2eff5.s1.eu.hivemq.cloud"
 const int   mqtt_port    = 8883;
 const char* mqtt_user    = "joao396";
 const char* mqtt_pass    = "Turiba14";
+const char* topico_vagas = "joao/estacionamento/vagas";
 
 #define TRIG_ENT  4
 #define ECHO_ENT  2
@@ -23,19 +25,35 @@ int vagasExibidos = -1;
 bool estadoAnteriorEnt = false;
 bool estadoAnteriorSai = false;
 
-WiFiClient espClient;
+WiFiClientSecure espClient;
 PubSubClient client(espClient);
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 void setup_wifi() {
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) { delay(500); }
+  espClient.setInsecure();
+}
+
+void reconnect() {
+  while (!client.connected()) {
+    if (client.connect("ESP32_Equipe13", mqtt_user, mqtt_pass)) {
+      char buf[8]; snprintf(buf, sizeof(buf), "%d", vagasAtuais);
+      client.publish(topico_vagas, buf);
+    } else {
+      delay(5000); 
+    }
+  }
 }
 
 void atualizarLCD() {
   if (vagasAtuais == vagasExibidos) return;
   vagasExibidos = vagasAtuais;
   lcd.setCursor(0, 0); lcd.printf("Vagas: %-9d", vagasAtuais);
+  if (client.connected()) {
+      char buf[8]; snprintf(buf, sizeof(buf), "%d", vagasAtuais);
+      client.publish(topico_vagas, buf);
+  }
 }
 
 float lerDistancia(int pinoTrig, int pinoEcho) {
@@ -57,6 +75,9 @@ void setup() {
 }
 
 void loop() {
+  if (!client.connected()) reconnect();
+  client.loop();
+
   float distEnt = lerDistancia(TRIG_ENT, ECHO_ENT);
   delayMicroseconds(PAUSA_CROSSTALK_US);
   float distSai = lerDistancia(TRIG_SAI, ECHO_SAI);
