@@ -7,6 +7,8 @@
 #define ECHO_SAI  25
 
 #define TOTAL_VAGAS 6
+#define PAUSA_CROSSTALK_US 5000UL
+
 int vagasAtuais = TOTAL_VAGAS;
 int vagasExibidos = -1;
 bool estadoAnteriorEnt = false;
@@ -38,6 +40,7 @@ float lerDistancia(int pinoTrig, int pinoEcho) {
 
 void loop() {
   float distEnt = lerDistancia(TRIG_ENT, ECHO_ENT);
+  delayMicroseconds(PAUSA_CROSSTALK_US);
   float distSai = lerDistancia(TRIG_SAI, ECHO_SAI);
 
   bool ent = (distEnt >= 1.5f && distEnt <= 9.5f);
