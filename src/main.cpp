@@ -14,10 +14,23 @@ void setup() {
   pinMode(ECHO_ENT, INPUT);
   pinMode(TRIG_SAI, OUTPUT);
   pinMode(ECHO_SAI, INPUT);
-  Serial.println("Sistema de Estacionamento Iniciado.");
+}
+
+float lerDistancia(int pinoTrig, int pinoEcho) {
+  digitalWrite(pinoTrig, LOW); delayMicroseconds(2);
+  digitalWrite(pinoTrig, HIGH); delayMicroseconds(10);
+  digitalWrite(pinoTrig, LOW);
+  long duracao = pulseIn(pinoEcho, HIGH, 17400UL);
+  if (duracao == 0) return -1.0f;
+  return (duracao * 0.0343f) / 2.0f;
 }
 
 void loop() {
-  // Estrutura principal aguardando implementacao
+  float distEnt = lerDistancia(TRIG_ENT, ECHO_ENT);
+  
+  if (distEnt >= 1.5f && distEnt <= 9.5f) {
+      if (vagasAtuais > 0) vagasAtuais--;
+      Serial.printf("Carro detectado! Vagas: %d\n", vagasAtuais);
+  }
   delay(100);
 }
