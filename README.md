@@ -1,5 +1,26 @@
 # Estacionamento Inteligente — Projeto Integrador
 
+
+Projetado por: 
+
+Nome: Vinícius Pádua Rugani Paes Neves
+Email: vinicius.neves@sou.unifeob.edu.br
+
+​Nome: Otávio Rugani Melo
+Email: otavio.rugani@sou.unifeob.edu.br
+​
+Nome: Matheus de Souza Pereira
+Email: matheus.pereira@sou.unifeob.edu.br
+​
+Nome: Diogo Bordin Rodrigues Ribeiro
+Email: diogo.bordin@sou.unifeob.com.br
+​
+Nome: Joao helio dos reis souza
+Email: joao.helio@sou.unifeob.com.br
+​
+Nome: Matheus Sousa Bento
+Email: matheus.s.bento@sou.unifeob.edu.br 
+
 > Sistema de controle de vagas com ESP32, sensores ultrassônicos HC-SR04, display LCD I2C e telemetria MQTT em tempo real.
 
 ## Sobre o Projeto
