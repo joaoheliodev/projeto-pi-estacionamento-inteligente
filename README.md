@@ -27,7 +27,7 @@ Nome: Matheus Sousa Bento
 Email: matheus.s.bento@sou.unifeob.edu.br 
 
 .
-> Sistema de controle de vagas com ESP32, sensores ultrassônicos HC-SR04, display LCD I2C e telemetria MQTT em tempo real.
+> Sistema de controle de Vasgas com ESP32, sensores ultrassônicos HC-SR04, display LCD I2C e telemetria MQTT em tempo real.
 
 ## Sobre o Projeto
 
