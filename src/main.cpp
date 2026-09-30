@@ -7,7 +7,7 @@
 // 1. CONFIGURACOES DE REDE E NUVEM
 const char* ssid         = "stalin";
 const char* password     = "palmeiras";
-const char* mqtt_server  = "3c36328d74d64bee879a2ce48ec2eff5.s1.eu.hivemq.cloud";
+const char* mqtt_server  = "????";
 const int   mqtt_port    = 8883;
 const char* mqtt_user    = "joao396";
 const char* mqtt_pass    = "Turiba14";
