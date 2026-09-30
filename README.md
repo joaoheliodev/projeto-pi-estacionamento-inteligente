@@ -11,7 +11,7 @@ Email: vinicius.neves@sou.unifeob.edu.br
 Email: otavio.rugani@sou.unifeob.edu.br
 ​
 .
-Nome: Matheus de Souza Pereira
+Nome:  Matheus de Souza Pereira
 Email: matheus.pereira@sou.unifeob.edu.br
 
 .​
